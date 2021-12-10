@@ -1,16 +1,38 @@
+let region_name = "";
+let myChart = document.getElementById("myChart").getContext("2d");
+let countries = [];
+const asia = document.querySelector("#asia");
+const europe = document.querySelector("#europe");
+const africa = document.querySelector("#africa");
+const Americas = document.querySelector("#americas");
+const Oceania = document.querySelector("#oceania");
 // const regions = {
 //   asia: asia,
 //   europe: europe,
-//   australia: australia,
-//   afrika: afrika,
-//   america: america,
-//   australia: australia,
+//   africa: africa,
+//   Americas: Americas,
+//   Oceania: Oceania,
 // };
-
-let countryCode = "AF";
-let region_name = "asia";
-let myChart = document.getElementById("myChart").getContext("2d");
-let countries = [];
+asia.addEventListener("click", (e) => {
+  region_name = "asia";
+  startAll(region_name);
+});
+europe.addEventListener("click", (e) => {
+  region_name = "europe";
+  startAll(region_name);
+});
+africa.addEventListener("click", (e) => {
+  region_name = "africa";
+  startAll(region_name);
+});
+Americas.addEventListener("click", (e) => {
+  region_name = "americas";
+  startAll(region_name);
+});
+Oceania.addEventListener("click", (e) => {
+  region_name = "oceania";
+  startAll(region_name);
+});
 
 async function fetchCountries(region_name) {
   const res = await fetch(
@@ -26,7 +48,9 @@ async function fetchCountries(region_name) {
       code: data[i].cca2,
       name: data[i].name.common,
     };
-    countries.push(countryData);
+    if (countryData.code !== "XK") {
+      countries.push(countryData);
+    }
   }
   return countries;
 }
@@ -71,7 +95,6 @@ function arangeDataForTable(arrData) {
     recovered: recovered,
     critical: critical,
   };
-  //console.log(arraysForTable);
   return arraysForTable;
 }
 
@@ -93,16 +116,19 @@ function createTable(organideData) {
   });
 }
 
-fetchCountries(region_name)
-  .then((countries) => {
-    const arrCovid = [];
-    countries.forEach((country) => {
-      arrCovid.push(fetchCovidData(country));
+function startAll(region_name) {
+  fetchCountries(region_name)
+    .then((countries) => {
+      // console.log(countries);
+      const arrCovid = [];
+      countries.forEach((country) => {
+        arrCovid.push(fetchCovidData(country));
+      });
+      return arrCovid;
+    })
+    .then((arrCovid) => Promise.all(arrCovid))
+    .then((data) => {
+      let organideData = arangeDataForTable(data);
+      createTable(organideData);
     });
-    return arrCovid;
-  })
-  .then((arrCovid) => Promise.all(arrCovid))
-  .then((data) => {
-    let organideData = arangeDataForTable(data);
-    createTable(organideData);
-  });
+}
