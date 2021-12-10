@@ -1,3 +1,11 @@
+// const regions = {
+//   asia: asia,
+//   europe: europe,
+//   africa: africa,
+//   Americas: Americas,
+//   Oceania: Oceania,
+// };
+
 let region_name = "";
 let myChart = document.getElementById("myChart").getContext("2d");
 let countries = [];
@@ -6,13 +14,12 @@ const europe = document.querySelector("#europe");
 const africa = document.querySelector("#africa");
 const Americas = document.querySelector("#americas");
 const Oceania = document.querySelector("#oceania");
-// const regions = {
-//   asia: asia,
-//   europe: europe,
-//   africa: africa,
-//   Americas: Americas,
-//   Oceania: Oceania,
-// };
+
+const confirmed = document.querySelector("#confirmed");
+const deaths = document.querySelector("#deaths");
+const recovered = document.querySelector("#recovered");
+const critical = document.querySelector("#critical");
+
 asia.addEventListener("click", (e) => {
   region_name = "asia";
   startAll(region_name);
@@ -98,9 +105,9 @@ function arangeDataForTable(arrData) {
   return arraysForTable;
 }
 
-function createTable(organideData) {
+function createTable(organideData, currentInterest) {
   let labels = organideData.names;
-  let deaths = organideData.deaths;
+  let deaths = organideData.currentInterest;
 
   let myGraph = new Chart(myChart, {
     type: "line",
