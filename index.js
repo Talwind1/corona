@@ -10,6 +10,7 @@
 let countryCode = "AF";
 let region_name = "asia";
 let myChart = document.getElementById("myChart").getContext("2d");
+let countries = [];
 
 async function fetchCountries(region_name) {
   const res = await fetch(
@@ -19,7 +20,6 @@ async function fetchCountries(region_name) {
     throw Error("region data not found");
   }
   const data = await res.json();
-  let countries = [];
 
   for (let i = 0; i < data.length; i++) {
     let countryData = {
@@ -40,61 +40,59 @@ async function fetchCovidData(country) {
   const latest_data = data.data.latest_data;
 
   const countryData = {
-    //  name: countryCode.name,
+    name: data.data.name,
     deaths: latest_data.deaths,
     confirmed: latest_data.confirmed,
     recovered: latest_data.recovered,
     critical: latest_data.critical,
   };
-  // console.log(countryData);
+
   return countryData;
 }
 
-// function arrayCovid(countries, type) {
-//   const promisesArray = [];
-//   countries.forEach((country) => {
-//     promisesArray.push(fetchCovidData(country));
-//   });
-//   return promisesArray;
-// }
+function arangeDataForTable(arrData) {
+  let names = [];
+  let deaths = [];
+  let confirmed = [];
+  let recovered = [];
+  let critical = [];
 
-// async function createGraph(tableData) {
-//   const myGraph = new Chart(myChart, {
-//     type: "bar",
-//     data: {
-//       datasets: tableData.deaths,
-//       labels: "ddd",
-//     },
-//     options: {},
-//   });
-// }
-//   let names = [];
-//   let data = [];
-//   tableData.forEach((element) => {
-//     names.push(element.name);
-//   });
-//   tableData.forEach((element) => {
-//     data.push(element.deaths);
-//   });
-//   const myGraph = new Chart(myChart, {
-//     type: "bar",
-//     data: {
-//       datasets: data,
-//       labels: names,
-//     },
-//     options: {},
-//   });
-// }
+  for (let i = 0; i < arrData.length; i++) {
+    names.push(arrData[i].name);
+    deaths.push(arrData[i].deaths);
+    confirmed.push(arrData[i].confirmed);
+    recovered.push(arrData[i].recovered);
+    critical.push(arrData[i].critical);
+  }
+  let arraysForTable = {
+    names: names,
+    deaths: deaths,
+    confirmed: confirmed,
+    recovered: recovered,
+    critical: critical,
+  };
+  //console.log(arraysForTable);
+  return arraysForTable;
+}
 
-// fetchCountries(region_name)
-//   .then((data) => {
-//     data.forEach((element) => {
-//       fetchCovidData(element.code);
-//     });
-//   })
-//   .then((tableData) => {
-//     createGraph(tableData);
-//   });
+function createTable(organideData) {
+  let labels = organideData.names;
+  let deaths = organideData.deaths;
+
+  let myGraph = new Chart(myChart, {
+    type: "line",
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: "Deaths",
+          data: deaths,
+        },
+      ],
+    },
+  });
+}
+
 fetchCountries(region_name)
   .then((countries) => {
     const arrCovid = [];
@@ -104,4 +102,7 @@ fetchCountries(region_name)
     return arrCovid;
   })
   .then((arrCovid) => Promise.all(arrCovid))
-  .then((data) => console.log(data));
+  .then((data) => {
+    let organideData = arangeDataForTable(data);
+    createTable(organideData);
+  });
