@@ -19,14 +19,15 @@ async function fetchCountries(region_name) {
   const data = await res.json();
 
   for (let i = 0; i < data.length; i++) {
-    countries.push(data[i].cca2);
+    let countryData = {
+      code: data[i].cca2,
+      name: data[i].name.common,
+    };
+    countries.push(countryData);
   }
 
   return countries;
 }
-
-let region_name = "asia";
-fetchCountries(region_name).then((data) => console.log(data));
 
 async function fetchCovidData(countryCode) {
   const url = await fetch(`https://corona-api.com/countries/${countryCode}`);
@@ -47,5 +48,12 @@ async function fetchCovidData(countryCode) {
 }
 
 let countryCode = "AF";
-fetchCovidData(countryCode);
-function collectData(dataType, countries) {}
+let region_name = "asia";
+
+fetchCountries(region_name).then((data) => {
+  data.forEach((element) => {
+    fetchCovidData(element.code);
+  });
+});
+
+async function createGraph() {}
