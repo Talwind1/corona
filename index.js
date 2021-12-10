@@ -14,12 +14,24 @@ const europe = document.querySelector("#europe");
 const africa = document.querySelector("#africa");
 const Americas = document.querySelector("#americas");
 const Oceania = document.querySelector("#oceania");
-
+let currentInterest = "";
 const confirmed = document.querySelector("#confirmed");
 const deaths = document.querySelector("#deaths");
 const recovered = document.querySelector("#recovered");
 const critical = document.querySelector("#critical");
 
+confirmed.addEventListener("click", () => {
+  currentInterest = "confirmed";
+});
+deaths.addEventListener("click", () => {
+  currentInterest = "deaths";
+});
+recovered.addEventListener("click", () => {
+  currentInterest = "recovered";
+});
+critical.addEventListener("click", () => {
+  currentInterest = "critical";
+});
 asia.addEventListener("click", (e) => {
   region_name = "asia";
   startAll(region_name);
@@ -105,9 +117,9 @@ function arangeDataForTable(arrData) {
   return arraysForTable;
 }
 
-function createTable(organideData, currentInterest) {
+function createTable(organideData, currentInterest = "confirmed") {
   let labels = organideData.names;
-  let deaths = organideData.currentInterest;
+  let deaths = organideData[currentInterest];
 
   let myGraph = new Chart(myChart, {
     type: "line",
@@ -115,7 +127,7 @@ function createTable(organideData, currentInterest) {
       labels: labels,
       datasets: [
         {
-          label: "Deaths",
+          label: currentInterest,
           data: deaths,
         },
       ],
