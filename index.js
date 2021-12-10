@@ -117,10 +117,10 @@ function arangeDataForTable(arrData) {
   return arraysForTable;
 }
 
-function createTable(organideData, currentInterest = "confirmed") {
+function createTable(organideData, currentInterest) {
   let labels = organideData.names;
-  let deaths = organideData[currentInterest];
-
+  let datas = organideData[currentInterest];
+  console.log(currentInterest);
   let myGraph = new Chart(myChart, {
     type: "line",
     data: {
@@ -128,7 +128,7 @@ function createTable(organideData, currentInterest = "confirmed") {
       datasets: [
         {
           label: currentInterest,
-          data: deaths,
+          data: datas,
         },
       ],
     },
