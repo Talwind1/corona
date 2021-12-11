@@ -15,7 +15,7 @@ let myGraph = new Chart(myChart, {
 
 let region_name = "";
 
-let countries = [];
+//let countries = [];
 const asia = document.querySelector("#asia");
 const europe = document.querySelector("#europe");
 const africa = document.querySelector("#africa");
@@ -39,8 +39,9 @@ Americas.addEventListener("click", (e) => {
 Oceania.addEventListener("click", (e) => {
   startAll("oceania");
 });
-
+let countries = [];
 async function fetchCountries(region_name) {
+  countries = [];
   const res = await fetch(
     `https://intense-mesa-62220.herokuapp.com/https://restcountries.herokuapp.com/api/v1/region/${region_name}`
   );
@@ -58,7 +59,6 @@ async function fetchCountries(region_name) {
       countries.push(countryData);
     }
   }
-
   return countries;
 }
 
@@ -80,13 +80,14 @@ async function fetchCovidData(country) {
 
   return countryData;
 }
-let names = [];
-let deaths = [];
-let confirmed = [];
-let recovered = [];
-let critical = [];
 
 function arangeDataForTable(arrData) {
+  let names = [];
+  let deaths = [];
+  let confirmed = [];
+  let recovered = [];
+  let critical = [];
+
   for (let i = 0; i < arrData.length; i++) {
     names.push(arrData[i].name);
     deaths.push(arrData[i].deaths);
@@ -101,14 +102,16 @@ function arangeDataForTable(arrData) {
     recovered: recovered,
     critical: critical,
   };
+  //  console.log(arraysForTable);
   return arraysForTable;
 }
 
 function startAll(region_name) {
+  // removeData(myGraph);
   //spinner.style.display = "inline-block";
   fetchCountries(region_name)
     .then((countries) => {
-      const arrCovid = [];
+      let arrCovid = [];
       countries.forEach((country) => {
         arrCovid.push(fetchCovidData(country));
       });
@@ -116,7 +119,9 @@ function startAll(region_name) {
     })
     .then((arrCovid) => Promise.all(arrCovid))
     .then((data) => {
+      console.log(data);
       let organizedData = arangeDataForTable(data);
+      console.log(organizedData);
       // console.log(organizedData);
       let botonsNames = Object.keys(data[0]);
       // console.log(botonsNames);
@@ -131,16 +136,15 @@ function startAll(region_name) {
             contCovid.appendChild(b);
 
             b.addEventListener("click", (e) => {
-              removeData(myGraph);
-              console.log(organizedData.names);
+              //  console.log(organizedData.names);
               //console.log(organizedData[e.target.id]);
+
               addData(
                 myGraph,
-                organizedData.names,
+                // organizedData.names,
                 organizedData[e.target.id],
                 e.target.id
               );
-
               //createTable(organizedData, btnName);
             });
           }
@@ -170,15 +174,19 @@ function startAll(region_name) {
 // }
 function removeData(myGraph) {
   myGraph.data.labels = [];
-  myGraph.data.datasets.forEach((dataset) => {
-    dataset.data = [];
-  });
+  myGraph.data.datasets[0].data = [];
+  myGraph.data.datasets[0].label = "";
   myGraph.update();
 }
 
-function addData(myGraph, label, data, title) {
+function addData(myGraph, data, title) {
+  let label = [];
+  countries.forEach((country) => label.push(country.name));
+  removeData(myGraph);
   myGraph.data.labels = label;
   myGraph.data.datasets[0].data = data;
-  myGraph.data.datasets[0].label = title;
+  myGraph.data.datasets[0].label = `Number of ${title[0].toUpperCase()}${title.slice(
+    1
+  )}`;
   myGraph.update();
 }
