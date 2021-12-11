@@ -1,4 +1,3 @@
-//const spinner = document.querySelector(".spinner");
 let myChart = document.getElementById("myChart").getContext("2d");
 let myGraph = new Chart(myChart, {
   type: "bar",
@@ -8,14 +7,21 @@ let myGraph = new Chart(myChart, {
       {
         label: "Covid Stats",
         data: [],
+        backgroundColor: [
+          "rgba(255,99,132,0.6)",
+          "rgba(255,159,64,0.6)",
+
+          "rgba(255,206,86,0.6)",
+          "rgba(75,192,192,0.6)",
+          "rgba(54,162,235,0.6)",
+        ],
       },
     ],
   },
+  options: { responsive: true },
 });
 
 let region_name = "";
-
-//let countries = [];
 const asia = document.querySelector("#asia");
 const europe = document.querySelector("#europe");
 const africa = document.querySelector("#africa");
@@ -69,7 +75,6 @@ async function fetchCovidData(country) {
   }
   const data = await url.json();
   const latest_data = data.data.latest_data;
-
   const countryData = {
     name: data.data.name,
     deaths: latest_data.deaths,
@@ -102,13 +107,10 @@ function arangeDataForTable(arrData) {
     recovered: recovered,
     critical: critical,
   };
-  //  console.log(arraysForTable);
   return arraysForTable;
 }
 
 function startAll(region_name) {
-  // removeData(myGraph);
-  //spinner.style.display = "inline-block";
   fetchCountries(region_name)
     .then((countries) => {
       let arrCovid = [];
@@ -120,12 +122,9 @@ function startAll(region_name) {
     .then((arrCovid) => Promise.all(arrCovid))
     .then((data) => {
       console.log(data);
+      //addCountries(data)
       let organizedData = arangeDataForTable(data);
-      console.log(organizedData);
-      // console.log(organizedData);
       let botonsNames = Object.keys(data[0]);
-      // console.log(botonsNames);
-      //console.log(contCovid.childElementCount);
       if (contCovid.childElementCount < 4) {
         botonsNames.forEach((btnName) => {
           if (btnName !== "name") {
@@ -136,16 +135,7 @@ function startAll(region_name) {
             contCovid.appendChild(b);
 
             b.addEventListener("click", (e) => {
-              //  console.log(organizedData.names);
-              //console.log(organizedData[e.target.id]);
-
-              addData(
-                myGraph,
-                // organizedData.names,
-                organizedData[e.target.id],
-                e.target.id
-              );
-              //createTable(organizedData, btnName);
+              addData(myGraph, organizedData[e.target.id], e.target.id);
             });
           }
         });
@@ -153,25 +143,6 @@ function startAll(region_name) {
     });
 }
 
-// function createTable(myGraph, organizedData, botonName) {
-//   let labels = organizedData.names;
-//   let datas = organizedData[botonName];
-
-//   console.log(labels);
-//   console.log(datas);
-//   addData(myGraph, labels, datas, );
-
-// console.log(myGraph);
-// myGraph.data.labels = labels;
-// myGraph.data.datasets[0].data = datas;
-
-// myGraph.update();
-// }
-
-// function createChart(params) {
-
-// console.log(datas);
-// }
 function removeData(myGraph) {
   myGraph.data.labels = [];
   myGraph.data.datasets[0].data = [];
