@@ -1,56 +1,43 @@
-// const regions = {
-//   asia: asia,
-//   europe: europe,
-//   africa: africa,
-//   Americas: Americas,
-//   Oceania: Oceania,
-// };
+//const spinner = document.querySelector(".spinner");
+let myChart = document.getElementById("myChart").getContext("2d");
+let myGraph = new Chart(myChart, {
+  type: "bar",
+  data: {
+    labels: [],
+    datasets: [
+      {
+        label: "Covid Stats",
+        data: [],
+      },
+    ],
+  },
+});
 
 let region_name = "";
-let myChart = document.getElementById("myChart").getContext("2d");
+
 let countries = [];
 const asia = document.querySelector("#asia");
 const europe = document.querySelector("#europe");
 const africa = document.querySelector("#africa");
 const Americas = document.querySelector("#americas");
 const Oceania = document.querySelector("#oceania");
+const contCovid = document.querySelector(".contCovid");
 let currentInterest = "";
-const confirmed = document.querySelector("#confirmed");
-const deaths = document.querySelector("#deaths");
-const recovered = document.querySelector("#recovered");
-const critical = document.querySelector("#critical");
 
-confirmed.addEventListener("click", () => {
-  currentInterest = "confirmed";
-});
-deaths.addEventListener("click", () => {
-  currentInterest = "deaths";
-});
-recovered.addEventListener("click", () => {
-  currentInterest = "recovered";
-});
-critical.addEventListener("click", () => {
-  currentInterest = "critical";
-});
 asia.addEventListener("click", (e) => {
-  region_name = "asia";
-  startAll(region_name);
+  startAll("asia");
 });
 europe.addEventListener("click", (e) => {
-  region_name = "europe";
-  startAll(region_name);
+  startAll("europe");
 });
 africa.addEventListener("click", (e) => {
-  region_name = "africa";
-  startAll(region_name);
+  startAll("africa");
 });
 Americas.addEventListener("click", (e) => {
-  region_name = "americas";
-  startAll(region_name);
+  startAll("americas");
 });
 Oceania.addEventListener("click", (e) => {
-  region_name = "oceania";
-  startAll(region_name);
+  startAll("oceania");
 });
 
 async function fetchCountries(region_name) {
@@ -71,6 +58,7 @@ async function fetchCountries(region_name) {
       countries.push(countryData);
     }
   }
+
   return countries;
 }
 
@@ -92,14 +80,13 @@ async function fetchCovidData(country) {
 
   return countryData;
 }
+let names = [];
+let deaths = [];
+let confirmed = [];
+let recovered = [];
+let critical = [];
 
 function arangeDataForTable(arrData) {
-  let names = [];
-  let deaths = [];
-  let confirmed = [];
-  let recovered = [];
-  let critical = [];
-
   for (let i = 0; i < arrData.length; i++) {
     names.push(arrData[i].name);
     deaths.push(arrData[i].deaths);
@@ -117,28 +104,10 @@ function arangeDataForTable(arrData) {
   return arraysForTable;
 }
 
-function createTable(organideData, currentInterest) {
-  let labels = organideData.names;
-  let datas = organideData[currentInterest];
-  console.log(currentInterest);
-  let myGraph = new Chart(myChart, {
-    type: "line",
-    data: {
-      labels: labels,
-      datasets: [
-        {
-          label: currentInterest,
-          data: datas,
-        },
-      ],
-    },
-  });
-}
-
 function startAll(region_name) {
+  //spinner.style.display = "inline-block";
   fetchCountries(region_name)
     .then((countries) => {
-      // console.log(countries);
       const arrCovid = [];
       countries.forEach((country) => {
         arrCovid.push(fetchCovidData(country));
@@ -147,7 +116,69 @@ function startAll(region_name) {
     })
     .then((arrCovid) => Promise.all(arrCovid))
     .then((data) => {
-      let organideData = arangeDataForTable(data);
-      createTable(organideData);
+      let organizedData = arangeDataForTable(data);
+      // console.log(organizedData);
+      let botonsNames = Object.keys(data[0]);
+      // console.log(botonsNames);
+      //console.log(contCovid.childElementCount);
+      if (contCovid.childElementCount < 4) {
+        botonsNames.forEach((btnName) => {
+          if (btnName !== "name") {
+            let b = document.createElement("button");
+            b.innerText = `${btnName}`;
+            b.id = `${btnName}`;
+            b.classList.add("btn");
+            contCovid.appendChild(b);
+
+            b.addEventListener("click", (e) => {
+              removeData(myGraph);
+              console.log(organizedData.names);
+              //console.log(organizedData[e.target.id]);
+              addData(
+                myGraph,
+                organizedData.names,
+                organizedData[e.target.id],
+                e.target.id
+              );
+
+              //createTable(organizedData, btnName);
+            });
+          }
+        });
+      }
     });
+}
+
+// function createTable(myGraph, organizedData, botonName) {
+//   let labels = organizedData.names;
+//   let datas = organizedData[botonName];
+
+//   console.log(labels);
+//   console.log(datas);
+//   addData(myGraph, labels, datas, );
+
+// console.log(myGraph);
+// myGraph.data.labels = labels;
+// myGraph.data.datasets[0].data = datas;
+
+// myGraph.update();
+// }
+
+// function createChart(params) {
+
+// console.log(datas);
+// }
+function removeData(myGraph) {
+  myGraph.data.labels = [];
+  myGraph.data.datasets.forEach((dataset) => {
+    dataset.data = [];
+  });
+  myGraph.update();
+}
+
+function addData(myGraph, label, data, title) {
+  myGraph.data.labels = label;
+  myGraph.data.datasets[0].data = data;
+  myGraph.data.datasets[0].label = title;
+  myGraph.update();
 }
