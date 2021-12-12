@@ -5,8 +5,9 @@ let myGraph = new Chart(myChart, {
     labels: [],
     datasets: [
       {
-        label: "Covid Stats",
         data: [],
+        label: "Covid Stats",
+
         backgroundColor: [
           "rgba(255,99,132,0.6)",
           "rgba(255,159,64,0.6)",
@@ -15,6 +16,8 @@ let myGraph = new Chart(myChart, {
           "rgba(75,192,192,0.6)",
           "rgba(54,162,235,0.6)",
         ],
+        borderColor: "#fff",
+        //  backgroundColor: ,
       },
     ],
   },
@@ -152,7 +155,7 @@ function removeData(myGraph) {
 
 function addData(myGraph, data, title) {
   let label = [];
-  countries.forEach((country) => label.push(country.name));
+  countries.forEach((country) => label.push(country.name.slice(0, 15)));
   removeData(myGraph);
   myGraph.data.labels = label;
   myGraph.data.datasets[0].data = data;

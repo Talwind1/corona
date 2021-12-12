@@ -3,12 +3,12 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  /* height: 100vh; */
   background-image: url("./img/COVID19-image-1-1650x550.jpg");
 }
 #title {
-  height: 10vh;
-  padding-top: 100px;
+  /* height: 5vh; */
+  /* padding-top: 60px; */
   font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
   color: rgb(223, 72, 92);
   text-shadow: 2px 2px black;
@@ -17,11 +17,11 @@ body {
 
 .conatiner {
   display: inline-block;
-  margin: 10px;
+  margin: 5px;
 }
 
 .contCovid {
-  height: 10vh;
+  height: 5vh;
 }
 #myChart {
   width: 70vw;
@@ -31,11 +31,10 @@ body {
 
 .btn-conatiner {
   display: flex;
-
   align-items: center;
   justify-content: center;
-  margin: 5px;
-  padding: 5px;
+  margin: 2px;
+  padding: 2px;
   width: 50%;
 }
 
